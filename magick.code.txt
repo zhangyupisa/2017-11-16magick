@@ -1,0 +1,53 @@
+install.packages("magick")
+library(magick)
+setwd("F:\\Doctor\\R语言学习\\自学\\2017-11-16利用magick实现R语言的PS功能")
+#从网页读取图片
+tiger <- image_read('http://jeroen.github.io/images/tiger.svg')
+#查看图片信息
+image_info(tiger)
+#图片信息输出
+image_write(tiger, path = "tiger.png", format = "png")
+#从本地读取图片并预览
+tiger <- image_read("tiger.png")
+print(tiger)
+#图片转向
+image_flop(tiger)
+#加上边线
+image_border(tiger,"green","20x10")
+#缩小图片
+image_scale(tiger,"200")
+#虚化
+image_blur(tiger,10,5)
+#文本添加
+image_annotate(celtics, "Beat LA!", size = 35, gravity = "southwest", color = "green")
+#管道操作符%>%类似于ggplot2里的+
+install.packages("magrittr")
+library(magrittr)
+image_read("tiger.png") %>%
+  image_rotate(270) %>%
+  image_border("green", "10x10") %>%
+  image_annotate("Beat LA!", color = "black", size = 30)
+#magick包里面所有函数都具有向量化功能，可以支持图层叠加、拼图以及动图处理
+earth <- image_read("https://jeroen.github.io/images/earth.gif")
+earth <- image_scale(earth, "200")
+length(earth)
+print(earth)
+#读取图片并组合为向量
+bigdata <- image_read('https://jeroen.github.io/images/bigdata.jpg')
+frink <- image_read("https://jeroen.github.io/images/frink.png")
+logo <- image_read("https://www.r-project.org/logo/Rlogo.png")
+img <- c(bigdata, logo, frink)
+#调整图片大小并预览
+img <- image_scale(img, "300x300")
+image_info(img)
+image_mosaic(img)
+#组合图片，但是background函数貌似无法运行
+left_to_right <- image_append(image_scale(img, "x200"))
+image_background(left_to_right, "white", flatten = TRUE)
+#通过animate合成GIF动图
+image_animate(image_scale(img, "200x200"), fps = 1, dispose = "previous")
+#通过向量组合animate实现动图
+newlogo <- image_scale(image_read("https://www.r-project.org/logo/Rlogo.png"), "x150")
+oldlogo <- image_scale(image_read("https://developer.r-project.org/Logo/Rlogo-3.png"), "x150")
+frames <- image_morph(c(oldlogo, newlogo), frames = 10)
+image_animate(frames)
